@@ -1,26 +1,19 @@
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
+from helper_functions import load_volcano_data
 
 # Load the data
-train_images = pd.read_csv(("/Users/pab.nb/Desktop/Herts Master's ") +
-        ("Project/data/volcano_data/train_images.csv"), header = None)
-train_labels = pd.read_csv(("/Users/pab.nb/Desktop/Herts Master's ") +
-        ("Project/data/volcano_data/train_labels.csv"))
-test_images = pd.read_csv(("/Users/pab.nb/Desktop/Herts Master's ") +
-        ("Project/data/volcano_data/test_images.csv"), header = None)
-test_labels = pd.read_csv(("/Users/pab.nb/Desktop/Herts Master's ") +
-        ("Project/data/volcano_data/test_labels.csv"))
+train_images, train_labels, test_images, test_labels = load_volcano_data()
 
-# Print a few of the images
-fig, ax = plt.subplots(2, 4, figsize=[5, 15], tight_layout=True)
-indexes = np.random.randint(0, 7000, size=8)
-m = 0
-for i in range(4):
-    for j in  range(2):
-        ax[j, i].imshow(train_images.iloc[m].to_numpy().reshape(110,110))
-        m += 1
-plt.show()
+# # Print a few of the images
+# fig, ax = plt.subplots(2, 4, figsize=[5, 15], tight_layout=True)
+# indexes = np.random.randint(0, 7000, size=8)
+# m = 0
+# for i in range(4):
+#     for j in  range(2):
+#         ax[j, i].imshow(train_images.iloc[m].to_numpy().reshape(110,110))
+#         m += 1
 
 #___________________________ NEED TO ANALYZE THE DATA _________________________#
 
@@ -36,10 +29,10 @@ ax.bar(np.unique(total_lbl["Volcano?"]),
             height=[len(total_lbl["Volcano?"].loc[total_lbl["Volcano?"] == 0]),
                     len(total_lbl["Volcano?"].loc[total_lbl["Volcano?"] == 1])],
             color=["orange", "green"], alpha=0.65,
-            tick_label=["No Volcano", "Volcano"])
+            tick_label=[r"No Volcano", "Volcano"])
 plt.show()
 
-# From those that are 1 -> get the secondary key 
+# From those that are 1 -> get the secondary key
 fig, ax = plt.subplots(1, 1, figsize=[10,10])
 plt.title("Subclass distribution of Magellanic Volcanoes")
 cmap = plt.get_cmap("viridis")
