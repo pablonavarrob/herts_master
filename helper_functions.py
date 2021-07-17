@@ -45,3 +45,32 @@ def remove_corrupted_images(image_data, print_all_corrupt = False):
             plt.close()
 
     return image_data.drop(corrupted_indexes).reset_index()
+
+
+def augmentation(image_data, image_labels):
+    ''' For each one of the input samples that does have a volcano,
+    we create different versions, that is: rotated 90, 180 and 270
+    degrees plus on that is mirrored.
+
+    Labels are necessary as well, as only those images that do
+    contain volcanoes will be agumented to compensate for the
+    imbalanced classes '''
+
+    for i in range(len(image_data)):
+        pass
+
+    return []
+
+
+def rotate_180(img):
+    ''' Rotates image data 180 degrees,
+    concatenates two np.rot90 statemenets. '''
+
+    return np.rot90(np.rot90(img))
+
+
+def rotate_270(img):
+    ''' Rotates image data 270 degrees,
+    concatenates three np.rot90 statemenets. '''
+
+    return np.rot90(np.rot90(np.rot90(img)))
