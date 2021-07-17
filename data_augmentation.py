@@ -2,7 +2,7 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 from PIL import Image, ImageOps
-from helper_functions import load_volcano_data, rotate_180, rotate_270
+from helper_functions import load_volcano_data, rotate_180, rotate_270, augmentation
 
 # Load the data
 train_images, train_labels, test_images, test_labels = load_volcano_data()
@@ -61,17 +61,27 @@ volcano_t4_img_data = (
 # ------------------------------------------------------------------------------
 ## DATA AUGMENTATION OF VOLCANO IMAGES
 
-# Need to return to dataframes
+# Need to return dataframes that can be stored row-wise
 volcano_t1_augmented_img = pd.DataFrame(
     augmentation(volcano_t1_img_data)
+    .reshape(len(volcano_t1_img_data)*5, 110**2)
 )
 volcano_t1_augmented_lbl = np.full(len(volcano_t1_img_data), 1)
 
-volcano_t2_augmented_img = augmentation(volcano_t2_img_data)
+volcano_t2_augmented_img = pd.DataFrame(
+    augmentation(volcano_t2_img_data)
+    .reshape(len(volcano_t2_img_data)*5, 110**2)
+)
 volcano_t2_augmented_lbl = np.full(len(volcano_t2_img_data), 2)
 
-volcano_t3_augmented_img = augmentation(volcano_t3_img_data)
+volcano_t3_augmented_img = pd.DataFrame(
+    augmentation(volcano_t3_img_data)
+    .reshape(len(volcano_t3_img_data)*5, 110**2)
+)
 volcano_t3_augmented_lbl = np.full(len(volcano_t3_img_data), 3)
 
-volcano_t4_augmented_img = augmentation(volcano_t4_img_data)
+volcano_t4_augmented_img = pd.DataFrame(
+    augmentation(volcano_t4_img_data)
+    .reshape(len(volcano_t4_img_data)*5, 110**2)
+)
 volcano_t4_augmented_lbl = np.full(len(volcano_t4_img_data), 4)
