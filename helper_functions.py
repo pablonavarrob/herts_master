@@ -1,6 +1,5 @@
 import numpy as np
 import pandas as pd
-from collections import Counter
 
 def load_volcano_data(separate_test_training = True):
     """ Loads the Magellanic Volcano data for the analysis.
@@ -44,7 +43,36 @@ def remove_corrupted_images(image_data, print_all_corrupt = False):
             plt.savefig("test/{}".format(index))
             plt.close()
 
-    return image_data.drop(corrupted_indexes).reset_index()
+    return image_data.drop(corrupted_indexes), corrupted_indexes
+
+
+def load_volcano_data_cleaned(separate_test_training = True):
+    """ Loads the Magellanic Volcano data for the analysis with the
+    corrupted images removed.
+
+    Use the kwarg separate_test_training if one wants to have it all together
+    as a dataframe and not separated into test and training sets. """
+
+    train_images_non_corrupted, idx_corrupted_train = remove_corrupted_images(
+            pd.read_csv(("/Users/pab.nb/Desktop/Herts Master's ") +
+            ("Project/data/volcano_data/train_images.csv"), header = None)
+        )
+    train_labels_non_corrupted = pd.read_csv(("/Users/pab.nb/Desktop/Herts Master's ") +
+            ("Project/data/volcano_data/train_labels.csv")).drop(idx_corrupted_train)
+
+    test_images_non_corrupted, idx_corrupted_test = remove_corrupted_images(
+            pd.read_csv(("/Users/pab.nb/Desktop/Herts Master's ") +
+            ("Project/data/volcano_data/test_images.csv"), header = None)
+        )
+    test_labels_non_corrupted = pd.read_csv(("/Users/pab.nb/Desktop/Herts Master's ") +
+            ("Project/data/volcano_data/test_labels.csv")).drop(idx_corrupted_test)
+
+
+    if separate_test_training == True:
+        return train_images, train_labels, test_images, test_labels
+
+    else:
+        return pd.concat([train_images, test_images]), pd.concat([train_labels, test_labels])
 
 
 def augmentation(image_data):
@@ -62,8 +90,8 @@ def augmentation(image_data):
         augmented[i+0] = np.rot90(img)
         augmented[i+1] = rotate_180(img)
         augmented[i+2] = rotate_270(img)
-        augmented[i+3] = np.flipud(img)
-        augmented[i+4] = np.fliplr(img)
+        augmented[i+3] = np.flipud(img)  # Flip upside down
+        augmented[i+4] = np.fliplr(img)  # Mirror left to right
         i += 5
 
     return augmented
