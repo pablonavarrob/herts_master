@@ -17,8 +17,8 @@ def load_raw_volcano_data(separate_test_training = True):
     test_labels = pd.read_csv(("/Users/pab.nb/Desktop/Herts Master's ") +
             ("Project/data/volcano_data/test_labels.csv"))
 
-    total_img = pd.concat([train_images, test_images]).reset_index()
-    total_lbl = pd.concat([train_labels, test_labels]).reset_index()
+    total_img = pd.concat([train_images, test_images], ignore_index=True)
+    total_lbl = pd.concat([train_labels, test_labels], ignore_index=True)
 
     if separate_test_training == True:
         return train_images, train_labels, test_images, test_labels
