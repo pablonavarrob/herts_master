@@ -1,7 +1,7 @@
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
-from helper_functions import (load_volcano_data,
+from data_loading_functions import (load_volcano_data,
             rotate_180, rotate_270, augmentation)
 
 # Load the data

@@ -1,49 +1,10 @@
-import numpy as np
 import pandas as pd
-import matplotlib.pyplot as plt
 from helper_functions import load_volcano_data
+from cleaning_functions import remove_corrupted_images
 
-# Load the data
-train_images, train_labels, test_images, test_labels = load_volcano_data()
+total_img, total_lbl = load_raw_volcano_data(separate_test_training=False)
 
-# # Print a few of the images
-# fig, ax = plt.subplots(2, 4, figsize=[5, 15], tight_layout=True)
-# indexes = np.random.randint(0, 7000, size=8)
-# m = 0
-# for i in range(4):
-#     for j in  range(2):
-#         ax[j, i].imshow(train_images.iloc[m].to_numpy().reshape(110,110))
-#         m += 1
 
-#___________________________ NEED TO ANALYZE THE DATA _________________________#
+image_data_non_corrupted, idx_corrupted_image = remove_corrupted_images(
 
-# Study the balancing of the data set
-total_img = pd.concat([train_images, test_images])
-total_lbl = pd.concat([train_labels, test_labels])
-
-# Veeery unbalanced
-fig, ax = plt.subplots(1, 1, figsize=[10,10])
-plt.title("Class distribution Magellanic Volcanoes")
-cmap = plt.get_cmap("viridis")
-ax.bar(np.unique(total_lbl["Volcano?"]),
-            height=[len(total_lbl["Volcano?"].loc[total_lbl["Volcano?"] == 0]),
-                    len(total_lbl["Volcano?"].loc[total_lbl["Volcano?"] == 1])],
-            color=["orange", "green"], alpha=0.65,
-            tick_label=[r"No Volcano", "Volcano"])
-plt.show()
-
-# From those that are 1 -> get the secondary key
-fig, ax = plt.subplots(1, 1, figsize=[10,10])
-plt.title("Subclass distribution of Magellanic Volcanoes")
-cmap = plt.get_cmap("viridis")
-ax.bar([1, 2, 3, 4],
-        height=[len(total_lbl.loc[total_lbl["Type"] == 1]),
-                len(total_lbl.loc[total_lbl["Type"] == 2]),
-                len(total_lbl.loc[total_lbl["Type"] == 3]),
-                len(total_lbl.loc[total_lbl["Type"] == 4])],
-        color=["green", "orange", "yellow", "red"], alpha=0.65,
-        tick_label=[r"$p \approx 0.98$",
-                    r"$p \approx 0.80$",
-                    r"$p \approx 0.60$",
-                    r"$p \approx 0.50$"])
-plt.show()
+train_labels_non_corrupted = total_lbl.drop(idx_corrupted_image)
