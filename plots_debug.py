@@ -26,3 +26,35 @@ ax[0].title.set_text("Mirrored image: horizontal axis")
 ax[1].imshow(np.flipud(a))
 ax[1].title.set_text("Mirrored image: vertical axis")
 plt.show()
+
+### OVERVIEW PLOTS #####
+# Study the balancing of the data set
+total_img = pd.concat([train_images, test_images])
+total_lbl = pd.concat([train_labels, test_labels])
+
+# Veeery unbalanced
+fig, ax = plt.subplots(1, 1, figsize=[10,10])
+plt.title("Class distribution Magellanic Volcanoes")
+cmap = plt.get_cmap("viridis")
+ax.bar(np.unique(total_lbl["Volcano?"]),
+            height=[len(total_lbl["Volcano?"].loc[total_lbl["Volcano?"] == 0]),
+                    len(total_lbl["Volcano?"].loc[total_lbl["Volcano?"] == 1])],
+            color=["orange", "green"], alpha=0.65,
+            tick_label=[r"No Volcano", "Volcano"])
+plt.show()
+
+# From those that are 1 -> get the secondary key
+fig, ax = plt.subplots(1, 1, figsize=[10,10])
+plt.title("Subclass distribution of Magellanic Volcanoes")
+cmap = plt.get_cmap("viridis")
+ax.bar([1, 2, 3, 4],
+        height=[len(total_lbl.loc[total_lbl["Type"] == 1]),
+                len(total_lbl.loc[total_lbl["Type"] == 2]),
+                len(total_lbl.loc[total_lbl["Type"] == 3]),
+                len(total_lbl.loc[total_lbl["Type"] == 4])],
+        color=["green", "orange", "yellow", "red"], alpha=0.65,
+        tick_label=[r"$p \approx 0.98$",
+                    r"$p \approx 0.80$",
+                    r"$p \approx 0.60$",
+                    r"$p \approx 0.50$"])
+plt.show()
