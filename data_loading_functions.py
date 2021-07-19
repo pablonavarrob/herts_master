@@ -5,7 +5,7 @@ import pandas as pd
 def load_raw_volcano_data(separate_test_training = True):
     """ Loads the Magellanic Volcano data for the analysis.
 
-    Use the kwarg separate_test_training if one wants to have it all together
+    Use the arg separate_test_training if one wants to have it all together
     as a dataframe and not separated into test and training sets. """
 
     train_images = pd.read_csv(("/Users/pab.nb/Desktop/Herts Master's ") +
@@ -25,3 +25,15 @@ def load_raw_volcano_data(separate_test_training = True):
 
     else:
         return total_img, total_lbl
+
+def load_cleaned_volcano_data():
+    """ Loads the cleaned Magellanic Data for the analysis and to produce the
+    augmented data set. """
+
+    img_data = pd.read_csv(("/Users/pab.nb/Desktop/Herts Master's ") +
+            ("Project/data/image_data_non_corrupted.csv"))
+
+    lbl_data = pd.read_csv(("/Users/pab.nb/Desktop/Herts Master's ") +
+            ("Project/data/train_labels_non_corrupted.csv"))
+
+    return img_data, lbl_data
