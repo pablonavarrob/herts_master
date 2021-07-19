@@ -1,6 +1,6 @@
 import numpy as np
 import pandas as pd
-import matplotlib.pyplot as plt s
+import matplotlib.pyplot as plt
 
 def remove_corrupted_images(image_data, print_all_corrupt = False):
 
