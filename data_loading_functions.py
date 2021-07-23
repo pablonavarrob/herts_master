@@ -30,10 +30,8 @@ def load_cleaned_volcano_data():
     """ Loads the cleaned Magellanic Data for the analysis and to produce the
     augmented data set. """
 
-    img_data = pd.read_csv(("/Users/pab.nb/Desktop/Herts Master's ") +
-            ("Project/data/image_data_non_corrupted.csv"))
+    img_data = pd.read_csv("../data/image_data_non_corrupted.csv")
 
-    lbl_data = pd.read_csv(("/Users/pab.nb/Desktop/Herts Master's ") +
-            ("Project/data/train_labels_non_corrupted.csv"))
+    lbl_data = pd.read_csv("../data/train_labels_non_corrupted.csv")
 
     return img_data, lbl_data
