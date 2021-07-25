@@ -53,6 +53,8 @@ def build_model_CNN_v1(INPUT_SHAPE):
 
     # Dense layer
     model.add(Flatten())
+    model.add(Dense(512, activation='relu'))
+    model.add(Dropout(rate=0.5))
     model.add(Dense(256, activation='relu'))
     model.add(Dropout(rate=0.5))
     model.add(Dense(1, activation='sigmoid')) # Classification layer
