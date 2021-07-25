@@ -42,19 +42,26 @@ def build_model_CNN_v1(INPUT_SHAPE):
     model.add(Dropout(rate=0.35))
 
     # Block 3
-    model.add(Conv2D(10, (6, 6), activation='relu'))
+    model.add(Conv2D(15, (6, 6), activation='relu'))
     model.add(MaxPooling2D(pool_size=(2, 2)))
     model.add(Dropout(rate=0.4))
 
     # Block 4
-    model.add(Conv2D(15, (8, 8), activation='relu'))
+    model.add(Conv2D(20, (8, 8), activation='relu'))
     model.add(MaxPooling2D(pool_size=(2, 2)))
     model.add(Dropout(rate=0.45))
 
     # Dense layer
     model.add(Flatten())
+    model.add(Dense(512, activation='relu'))
+    model.add(Dropout(rate=0.5))
     model.add(Dense(256, activation='relu'))
     model.add(Dropout(rate=0.5))
     model.add(Dense(1, activation='sigmoid')) # Classification layer
 
     return model
+
+# The benefits of using a convolutional network rather than a fully connected
+# network is that to, theoretically achieve similar levels of accuracy,
+# the fully connected network would have to be insanely massive compared to the
+# convolutional network that we just showed above.

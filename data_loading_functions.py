@@ -35,3 +35,24 @@ def load_cleaned_volcano_data():
     lbl_data = pd.read_csv("../data/train_labels_non_corrupted.csv")
 
     return img_data, lbl_data
+
+def load_augmented_data():
+    """ Gets all of the augmented data sets and loads them into a separate
+    array, leaving the originals out. """
+
+    img_data_aug = pd.DataFrame()
+    img_labl_aug = pd.DataFrame()
+
+    for i in range(1, 5):
+        load_aug_data_img = (
+            pd.read_csv("../data/volcano_type{}_augmented_img.csv".format(i))
+        )
+
+        load_aug_data_lbl = (
+            pd.read_csv("../data/volcano_type{}_augmented_lbl.csv".format(i))
+        )
+
+        img_data_aug = pd.concat([img_data_aug, load_aug_data_img], ignore_index=True)
+        img_labl_aug = pd.concat([img_labl_aug, load_aug_data_lbl], ignore_index=True)
+
+    return img_data_aug, img_labl_aug
