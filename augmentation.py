@@ -12,7 +12,9 @@ for i in range(1, 5):
         image_data_cleaned
         .loc[label_data_cleaned["Type"] == i]
         .to_numpy()
-        .reshape(len(image_data_cleaned.loc[label_data_cleaned["Type"] == i]), 110, 110)
+        .reshape(
+            len(image_data_cleaned.loc[label_data_cleaned["Type"] == i]),
+            110, 110)
     )
 
     volcano_augmented_img, volcano_augmented_lbl = augmentation(

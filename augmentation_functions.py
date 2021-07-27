@@ -1,80 +1,54 @@
-import numpy as np
 import pandas as pd
-from tensorflow.image import random_contrast, random_brightness
+import numpy as np
+from augmentation_functions import *
+from data_loading_functions import load_cleaned_volcano_data
 
 
-def augmentation(image_data, label_data):
-    ''' For each one of the input samples that does have a volcano,
-    we create different versions, that is: rotated 90, 180 and 270
-    degrees plus on that is mirrored.
+image_data_cleaned, label_data_cleaned = load_cleaned_volcano_data()
+no_volcano = image_data_cleaned.loc[label_data_cleaned["Volcano?"] == 0]
 
-    Labels are necessary as well, as only those images that do
-    contain volcanoes will be agumented to compensate for the
-    imbalanced classes '''
+for i in range(1, 5):
+    volcano_ = (
+        image_data_cleaned
+        .loc[label_data_cleaned["Type"] == i]
+        .to_numpy()
+        .reshape(
+            len(image_data_cleaned.loc[label_data_cleaned["Type"] == i]),
+            110, 110)
+    )
 
-    def append_labels(idx, augmentation_type):
-        augmented_labels.append({
-            "Volcano?": label_data.iloc[idx]["Volcano?"],
-            "Type": label_data.iloc[idx]["Type"],
-            "Radius": label_data.iloc[idx]["Radius"],
-            "Number Volcanoes": label_data.iloc[idx]["Number Volcanoes"],
-            "Augmentation type": augmentation_type
-        })
+    volcano_augmented_img, volcano_augmented_lbl = augmentation(
+            volcano_,
+            label_data_cleaned.loc[label_data_cleaned["Type"] == i]
+        )
 
-    augmented_labels = []  # Create empty list, append dictionaries
-    augmented = np.zeros((len(image_data)*11, 110, 110))
-    i = 0
-    j = 0
-    for img in image_data:
+    volcano_augmented_img = pd.DataFrame(
+        volcano_augmented_img
+        .reshape(len(volcano_)*5, 110**2)
+    )
 
-        # Data augmentation loop
-        augmented[i+0] = np.rot90(img)
-        append_labels(j, "rot90")
-        augmented[i+1] = rotate_180(img)
-        append_labels(j, "rot180")
-        augmented[i+2] = rotate_270(img)
-        append_labels(j, "rot270")
-        augmented[i+3] = np.flipud(img)  # Flip upside down
-        append_labels(j, "flipud")
-        augmented[i+4] = np.fliplr(img)  # Mirror left to right
-        append_labels(j, "fliplr")
-        augmented[i+5] = contrast_randomize(img)  # Contrast
-        append_labels(j, "contrast")
-        augmented[i+6] = exposure_randomize(img)  # Exposure
-        append_labels(j, "exposure")
-        augmented[i+7] = np.fliplr(contrast_randomize(img))  # Contrast + fliplr
-        append_labels(j, "contrast_fliplr")
-        augmented[i+8] = np.fliplr(exposure_randomize(img))  # Exposure + fliplr
-        append_labels(j, "exposure_fliplr")
-        augmented[i+9] = np.flipud(contrast_randomize(img))  # Contrast + flipud
-        append_labels(j, "contrast_flipud")
-        augmented[i+10] = np.flipud(exposure_randomize(img))  # Exposure + flipud
-        append_labels(j, "exposure_flipud")
-        i += 11
-        j += 1
+    volcano_augmented_img.to_csv(
+    "../data/volcano_type{}_augmented_img.csv".format(i),
+    index=False)
+    volcano_augmented_lbl.to_csv(
+    "../data/volcano_type{}_augmented_lbl.csv".format(i),
+    index=False)
 
-    return augmented, pd.DataFrame(augmented_labels)
+### Test the brightness and test the image increase/decease
 
-
-def rotate_180(img):
-    ''' Rotates image data 180 degrees,
-    concatenates two np.rot90 statemenets. '''
-
-    return np.rot90(np.rot90(img))
-
-
-def rotate_270(img):
-    ''' Rotates image data 270 degrees,
-    concatenates three np.rot90 statemenets. '''
-
-    return np.rot90(np.rot90(np.rot90(img)))
-
-def contrast_randomize(img):
-    ''' Randomly increases/decreases the contrast of the input image. '''
-
-    return tf.reshape(random_contrast(img, lower=0.5, upper=1.5), (110, 110)).numpy()
-
-def exposure_randomize(img):
-    ''' Randomly increases/decreases the exposure of the input image. '''
-
-    return tf.reshape(random_brightness(img, 0.35), (110, 110)).numpy()
+inx = [8, 14, 45]
+fig, ax = plt.subplots(3, 3, figsize=[15, 10])
+for i in range(3):
+    img = img_data_normalized[inx[i]]
+    contrast = tf.reshape(random_contrast(
+        img, lower=0.25, upper=1.85), (110, 110)).numpy()
+    brightness = tf.reshape(random_brightness(img, 0.25), (110, 110)).numpy()
+    # img = tf.image.resize(img_data_normalized[inx[i]], (110, 110))
+    ax[i, 0].imshow(contrast)
+    ax[i, 1].imshow(brightness)
+    ax[i, 2].imshow(img.reshape(110, 110))
+    ax[i, 1].set_xticklabels([])
+    ax[i, 1].set_yticklabels([])
+    ax[i, 0].set_xticklabels([])
+    ax[i, 0].set_yticklabels([])
+plt.savefig('augmentation_exposure.jpg', dpi=300)
