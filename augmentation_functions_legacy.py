@@ -55,6 +55,7 @@ def augmentation(image_data, label_data):
 
     return augmented, pd.DataFrame(augmented_labels)
 
+
 def shaper_tensor_check(img):
     ''' Checks whether the shape of the input image is accepted by tensorflow
     by added the third dimension. Used for the brightness and contrast
@@ -66,6 +67,7 @@ def shaper_tensor_check(img):
         pass
 
     return img
+
 
 def array_shape_check(img):
 
@@ -94,15 +96,9 @@ def rotate_270(img):
 
     return np.rot90(np.rot90(np.rot90(img)))
 
-def contrast_randomize(img):
-    ''' Randomly increases/decreases the contrast of the input image. '''
 
-    img = shaper_tensor_check(img)
-    img = tf.reshape(
-            random_contrast(img, lower=0.75, upper=1.25), (110, 110)
-            ).numpy()
+def contrast_randomize(im
 
-    return img
 def exposure_randomize(img):
     ''' Randomly increases/decreases the exposure of the input image. '''
 
