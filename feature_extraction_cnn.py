@@ -29,25 +29,27 @@ for i in range(len(model.layers)):
 model_viz = Model(inputs=model.inputs , outputs=model.layers[1].output)
 
 # Select normalized image
-image = img_data_normalized[0]
+image = img_data_normalized[8]
 image = np.expand_dims(image, axis=0) # Need to expand dimensions so that the
 # input looks like something from within the network
 
-#calculating features_map
+# Image of which the feature map will be computed
+fig, ax = plt.subplots(1, 1, figsize=(15,15), tight_layout=False)
+plt.suptitle("Type 1 Volcano - Example for the Feature Map", fontsize=30)
+ax.imshow(image.reshape(110, 110), cmap='gray')
+ax.set_xticklabels([])
+ax.set_yticklabels([])
+plt.savefig("figures/image_of_featuremap.jpg", dpi=300)
+
+# Compute and plot the feature map for one of the images
+# from the second convo layer
 features = model_viz.predict(image).reshape(54, 54, 5)
-fig, ax = plt.subplots(5, 1, figsize=(20,15))
+fig, ax = plt.subplots(1, 5, figsize=(20,15), tight_layout=False)
+plt.suptitle("Feature map for a type 1 volcano", fontsize=30)
 for i in range(5):
     ax[i].imshow(features[:,:,i],
      cmap='gray') #, vmin=min(features[:,:,i]), vmax=max(features[:,:,i]))
     ax[i].set_xticklabels([])
     ax[i].set_yticklabels([])
-plt.savefig("feature_map.jpg", dpi=300)
+plt.savefig("figures/feature_map.jpg", dpi=300)
 plt.close()
-
-
-plt.imshow(image.reshape(110, 110), cmap='gray')
-plt.savefig("image_to_feature_map.jpg", dpi=300)
-
-# It might be that we need to remove some columns/rows to return the
-# correct shape for the convo filter -> use below code for that
-# image = (image.reshape(110, 110))[1:109, 1:109].reshape(108, 108, 1)

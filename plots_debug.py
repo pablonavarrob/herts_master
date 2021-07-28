@@ -1,7 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd
-from helper_functions import load_volcano_data, rotate_180, rotate_270
+from data_loading_functions import load_raw_volcano_data
 
 train_images, train_labels, test_images, test_labels = load_volcano_data()
 
@@ -29,8 +29,7 @@ plt.show()
 
 ### OVERVIEW PLOTS #####
 # Study the balancing of the data set
-total_img = pd.concat([train_images, test_images])
-total_lbl = pd.concat([train_labels, test_labels])
+total_img, total_lbl = load_raw_volcano_data(False)
 
 # Veeery unbalanced
 fig, ax = plt.subplots(1, 1, figsize=[10,10])
@@ -41,7 +40,7 @@ ax.bar(np.unique(total_lbl["Volcano?"]),
                     len(total_lbl["Volcano?"].loc[total_lbl["Volcano?"] == 1])],
             color=["orange", "green"], alpha=0.65,
             tick_label=[r"No Volcano", "Volcano"])
-plt.show()
+plt.savefig("figures/class_distribution.jpg", dpi=300)
 
 # From those that are 1 -> get the secondary key
 fig, ax = plt.subplots(1, 1, figsize=[10,10])
@@ -57,4 +56,4 @@ ax.bar([1, 2, 3, 4],
                     r"$p \approx 0.80$",
                     r"$p \approx 0.60$",
                     r"$p \approx 0.50$"])
-plt.show()
+plt.savefig("figures/subclass_distribution.jpg", dpi=300)
