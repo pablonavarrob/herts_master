@@ -34,8 +34,8 @@ for i in range(1, 5):
     "../data/volcano_type{}_augmented_lbl.csv".format(i),
     index=False)
 
+##### DEBUGGING #######
 ### Test the brightness and test the image increase/decease
-
 inx = [8, 14, 45]
 fig, ax = plt.subplots(3, 3, figsize=[15, 10])
 for i in range(3):

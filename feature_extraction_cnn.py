@@ -17,6 +17,7 @@ os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
 
 # Import the previous model that was obtained from the training with the
 # regular images
+model = tf.keras.models.load_model('CNN_model_v1.h5')
 
 # -> Retrieve the convolutional layers from the previous model
 for i in range(len(model.layers)):

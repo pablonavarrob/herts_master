@@ -47,20 +47,17 @@ model.summary()
 # Fit the model to the data and get the results
 history = model.fit(
     X_train, y_train,
-    batch_size=300, epochs=50,
-    verbose=True, validation_split=0.33, callbacks=None
+    batch_size=250, epochs=65,
+    verbose=True, validation_split=0.35, callbacks=None
 )
 
-# serialize model to JSON
-model_json = model.to_json()
-with open("model.json", "w") as json_file:
-    json_file.write(model_json)
-# serialize weights to HDF5
-model.save_weights("model.h5")
+# Save model and weights to HDF5
+model.save("CNN_model_v1.h5")
 print("Saved model to disk")
 
 # Print the accuracy of the test data-set
-score = model.evaluate(X_test, y_test, verbose=True)
+loss, acc = model.evaluate(X_test, y_test, verbose=2)
+print("Model accuracy: {:5.2f}%".format(100 * acc))
 
 plt.plot(history.history['acc'], label="train acc")
 plt.plot(history.history['val_acc'], label="val acc")
