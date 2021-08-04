@@ -24,7 +24,11 @@ for i in range(1, 5):
 
     volcano_augmented_img = pd.DataFrame(
         volcano_augmented_img
-        .reshape(len(volcano_)*5, 110**2)
+        .reshape(len(volcano_)*2, 110**2)
+    )
+
+    volcano_augmented_lbl = pd.DataFrame(
+        volcano_augmented_lbl
     )
 
     volcano_augmented_img.to_csv(
