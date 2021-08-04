@@ -1,54 +1,121 @@
 import pandas as pd
 import numpy as np
-from augmentation_functions import *
-from data_loading_functions import load_cleaned_volcano_data
+import random
+import tensorflow as tf
+from PIL import Image, ImageEnhance
+
+def contrast_randomize(img, PIL_output=False):
+    ''' Randomly increases/decreases the contrast of the input image. '''
+
+    img = array_shape_check(img)
+    # Convert to PIL format
+    img = Image.fromarray(img.astype(np.uint8))
+    # Increase contrast using random integer
+    rand_contrast = np.random.uniform(0.8, 1.2)
+    img = ImageEnhance.Contrast(img).enhance(rand_contrast)
+    # Return an array of the same shape or a PIL image if used concat
+    if PIL_output:
+        return img
+    else:
+        return np.asarray(img, dtype='uint8')
+
+def exposure_randomize(img, PIL_input):
+    ''' Randomly increases/decreases the exposure of the input image. '''
+
+    if PIL_input:
+        pass
+    else:
+        # Convert to PIL format
+        img = array_shape_check(img)
+        img = Image.fromarray(img.astype(np.uint8))
+
+    # Increase contrast using random integer
+    rand_exp = np.random.uniform(0.8, 1.2)
+    img = ImageEnhance.Brightness(img).enhance(rand_exp)
+
+    # Return an array of the same shape or a PIL image if used concat
+    return np.asarray(img, dtype='uint8')
+
+def random_flip(img):
+    ''' Straightforward randomization of the image flip '''
+
+    int = random.randint(1, 4)
+    img = array_shape_check(img)
+
+    if int == 1:
+        # No change
+        print('No change')
+        return img
+
+    elif int == 2:
+        # Up-down flip
+        print('Up-down flip')
+        return np.flipud(img)
+
+    elif int == 3:
+        # Left-right flip
+        print('Left-right flip')
+        return np.fliplr(img)
+
+    elif int == 4:
+        # Up-down and left-right
+        print('Left-right and up-down')
+        return np.fliplr(np.flipud(img))
 
 
-image_data_cleaned, label_data_cleaned = load_cleaned_volcano_data()
-no_volcano = image_data_cleaned.loc[label_data_cleaned["Volcano?"] == 0]
+def shaper_tensor_check(img):
+    ''' Checks whether the shape of the input image is accepted by tensorflow
+    by added the third dimension. Used for the brightness and contrast
+    augmentation. Input a numpy array. '''
 
-for i in range(1, 5):
-    volcano_ = (
-        image_data_cleaned
-        .loc[label_data_cleaned["Type"] == i]
-        .to_numpy()
-        .reshape(
-            len(image_data_cleaned.loc[label_data_cleaned["Type"] == i]),
-            110, 110)
-    )
+    if img.shape != (110, 110, 1):
+        img = img.reshape(110, 110, 1)
+    else:
+        pass
 
-    volcano_augmented_img, volcano_augmented_lbl = augmentation(
-            volcano_,
-            label_data_cleaned.loc[label_data_cleaned["Type"] == i]
-        )
+    return img
 
-    volcano_augmented_img = pd.DataFrame(
-        volcano_augmented_img
-        .reshape(len(volcano_)*5, 110**2)
-    )
 
-    volcano_augmented_img.to_csv(
-    "../data/volcano_type{}_augmented_img.csv".format(i),
-    index=False)
-    volcano_augmented_lbl.to_csv(
-    "../data/volcano_type{}_augmented_lbl.csv".format(i),
-    index=False)
+def array_shape_check(img):
 
-### Test the brightness and test the image increase/decease
+    if img.shape != (110, 110):
+        img = img.reshape(110, 110)
+    else:
+        pass
 
-inx = [8, 14, 45]
-fig, ax = plt.subplots(3, 3, figsize=[15, 10])
-for i in range(3):
-    img = img_data_normalized[inx[i]]
-    contrast = tf.reshape(random_contrast(
-        img, lower=0.25, upper=1.85), (110, 110)).numpy()
-    brightness = tf.reshape(random_brightness(img, 0.25), (110, 110)).numpy()
-    # img = tf.image.resize(img_data_normalized[inx[i]], (110, 110))
-    ax[i, 0].imshow(contrast)
-    ax[i, 1].imshow(brightness)
-    ax[i, 2].imshow(img.reshape(110, 110))
-    ax[i, 1].set_xticklabels([])
-    ax[i, 1].set_yticklabels([])
-    ax[i, 0].set_xticklabels([])
-    ax[i, 0].set_yticklabels([])
-plt.savefig('augmentation_exposure.jpg', dpi=300)
+    return img
+
+def augmentation(image_data, image_label):
+    ''' For each one of the input samples that does have a volcano,
+    we create different versions, that is, randomized brighness and contrast
+    as well as flips up-down and left-right.
+
+    This function thus creates a larger set of images containing volcanoes,
+    however there will still be an imbalace in the subclasses.
+
+    The output comprises both the non-augmneted images and their augmented
+    counterparts - only one augmentation per image. '''
+
+    # image_data = image_data.to_numpy().reshape(len(image_data), 110, 110)
+    augmented = np.zeros((len(image_data)*2, 110, 110))
+    labels = []
+    i = 0
+    j = 0
+    for img in image_data:
+        augmented[i] = (
+            random_flip(
+                exposure_randomize(
+                    contrast_randomize(img, PIL_output=True),
+                    PIL_input=True
+                    )
+                )
+            )
+        labels.append(image_label.iloc[j])
+        augmented[i+1] = img
+        labels.append(image_label.iloc[j])
+        # Add index
+        print(i, j)
+        i += 2
+        j += 1
+
+    return augmented, labels
