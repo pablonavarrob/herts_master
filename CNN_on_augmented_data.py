@@ -32,7 +32,7 @@ print('Data normalized')
 X_train, X_test, y_train, y_test = train_test_split(
     img_data_normalized,
     img_lbl["Volcano?"], # Classify on whether there is a volcano or not
-    test_size=0.1,
+    test_size=0.33,
     random_state=1
 )
 
@@ -54,7 +54,7 @@ model.summary()
 # Fit the model to the data and get the results
 history = model.fit(
     X_train, y_train,
-    batch_size=64, epochs=70,
+    batch_size=64, epochs=100,
     verbose=True, validation_split=0.35, callbacks=None
 )
 
