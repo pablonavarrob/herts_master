@@ -21,7 +21,7 @@ img_non_volcano = img_data[lbl_data['Volcano?'] == 0]
 lbl_non_volcano = lbl_data[lbl_data['Volcano?'] == 0]
 img_data = pd.concat([img_non_volcano, img_aug], ignore_index=True)
 img_lbl = pd.concat([lbl_non_volcano, lbl_aug], ignore_index=True)
-print('Data loaded')
+print('Augmented data loaded')
 
 
 # Normalize and convert to numpy
