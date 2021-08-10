@@ -8,14 +8,12 @@ def load_raw_volcano_data(separate_test_training = True):
     Use the arg separate_test_training if one wants to have it all together
     as a dataframe and not separated into test and training sets. """
 
-    train_images = pd.read_csv(("/Users/pab.nb/Desktop/Herts Master's ") +
-            ("Project/data/volcano_data/train_images.csv"), header = None)
-    train_labels = pd.read_csv(("/Users/pab.nb/Desktop/Herts Master's ") +
-            ("Project/data/volcano_data/train_labels.csv"))
-    test_images = pd.read_csv(("/Users/pab.nb/Desktop/Herts Master's ") +
-            ("Project/data/volcano_data/test_images.csv"), header = None)
-    test_labels = pd.read_csv(("/Users/pab.nb/Desktop/Herts Master's ") +
-            ("Project/data/volcano_data/test_labels.csv"))
+    train_images = pd.read_csv(
+        ("../data/volcano_data/train_images.csv"), header = None)
+    train_labels = pd.read_csv(("../data/volcano_data/train_labels.csv"))
+    test_images = pd.read_csv(
+        ("../data/volcano_data/test_images.csv"), header = None)
+    test_labels = pd.read_csv(("../data/volcano_data/test_labels.csv"))
 
     total_img = pd.concat([train_images, test_images], ignore_index=True)
     total_lbl = pd.concat([train_labels, test_labels], ignore_index=True)
@@ -52,7 +50,11 @@ def load_augmented_data():
             pd.read_csv("../data/volcano_type{}_augmented_lbl.csv".format(i))
         )
 
-        img_data_aug = pd.concat([img_data_aug, load_aug_data_img], ignore_index=True)
-        img_labl_aug = pd.concat([img_labl_aug, load_aug_data_lbl], ignore_index=True)
+        img_data_aug = pd.concat(
+            [img_data_aug, load_aug_data_img], ignore_index=True
+        )
+        img_labl_aug = pd.concat(
+            [img_labl_aug, load_aug_data_lbl], ignore_index=True
+        )
 
     return img_data_aug, img_labl_aug

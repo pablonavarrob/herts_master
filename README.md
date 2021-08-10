@@ -18,7 +18,7 @@ for the sciences,” arXiv preprint arXiv:2102.04883, 2021.
 
 [5]  J. M. Johnson and T. M. Khoshgoftaar, “Survey on deep learning with class imbalance,” Journal of Big Data, vol. 6, no. 1, pp. 1–54, 2019.
 
-[6] H. Shen, D. George, E. Huerta, and Z. Zhao, “Denoising gravitational waves using deep learning withrecurrent denoising autoencoders.(2017),” arXiv preprint arXiv:1711.09919. 
+[6] H. Shen, D. George, E. Huerta, and Z. Zhao, “Denoising gravitational waves using deep learning withrecurrent denoising autoencoders.(2017),” arXiv preprint arXiv:1711.09919.
 
 [7] H. Sewani and R. Kashef, “An autoencoder-based deep learning classifier for efficient diagnosis of autism,” Children, vol. 7, no. 10, p. 182, 2020.
 
