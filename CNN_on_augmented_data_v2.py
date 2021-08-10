@@ -23,7 +23,6 @@ img_data = pd.concat([img_non_volcano, img_aug], ignore_index=True)
 img_lbl = pd.concat([lbl_non_volcano, lbl_aug], ignore_index=True)
 print('Augmented data loaded')
 
-
 # Normalize and convert to numpy
 img_data_normalized = normalize_image_data(img_data)
 print('Data normalized')
