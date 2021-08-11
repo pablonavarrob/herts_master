@@ -1,8 +1,7 @@
 from sklearn.metrics import (f1_score, confusion_matrix,
-                             roc_curve, plot_confusion_matrix,
-                             plot_roc_curve)
-import pandas as pd
+                             roc_curve)
 import numpy as np
+import seaborn as sn
 import matplotlib.pyplot as plt
 from data_loading_functions import load_cleaned_volcano_data, load_augmented_data
 from CNN_functions import normalize_image_data, build_model_CNN_v2
@@ -28,9 +27,21 @@ X_train, X_test, y_train, y_test = train_test_split(
     random_state=1
 )
 
-# Import the model trained on augmented data 
-model = tf.keras.models.load_model('CNN_model_v2_augmented_data.h5')
+# Import the model trained on augmented data
+model_cnn = tf.keras.models.load_model('CNN_model_v2_augmented_data.h5')
 
+# Show the confusion matrix
+class_names = ['No Volcano', 'Volcano']
+y_pred = tf.greater(model_cnn.predict(X_test), 0.5).numpy()
+# Here in can use threshold
+# when usuing tf.greater(predition, float_threshold)
+cm = confusion_matrix(y_test, y_pred.astype(int))
+
+sns.heatmap(
+    cm, annot=True, xticklabels=class_names, yticklabels=class_names,
+    fmt='d', cmap='Blues'
+)
+plt.show()
 # One good way to measure performance for imbalanced datasets is the
 # F-score, which combines precision and recall ina single measure.
 # F-score is the harmonic mean of both quantities.
