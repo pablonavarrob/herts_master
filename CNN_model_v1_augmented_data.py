@@ -59,7 +59,7 @@ history = model.fit(
 )
 
 # Save model and weights to HDF5
-model.save("CNN_model_v1_augmented_data.h5")
+model.save("models/CNN_model_v1_augmented_data.h5")
 print("Saved model to disk")
 
 # Print the accuracy of the test data-set

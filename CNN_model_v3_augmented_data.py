@@ -57,7 +57,7 @@ history = model.fit(
     verbose=True, validation_split=0.35, callbacks=None)
 
 # Save model and weights to HDF5
-model.save("CNN_model_v3_augmented_data.h5")
+model.save("models/CNN_model_v3_augmented_data.h5")
 print("Saved model to disk")
 
 # Print the accuracy of the test data-set

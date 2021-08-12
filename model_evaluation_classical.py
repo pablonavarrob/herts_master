@@ -10,6 +10,8 @@ import tensorflow as tf
 import os
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
 
+### Load the data normalized, not the augmented one (that was used just for
+# the training of the extended CNN)
 # Import data wuthout the corrupted images
 img_data, lbl_data = load_cleaned_volcano_data()
 
