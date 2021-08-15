@@ -62,7 +62,7 @@ rfc = RandomForestClassifier()
 rfc_opt = (
         GridSearchCV(rfc, param_grid_rfc,
                      scoring='roc_auc', n_jobs=-1,
-                     verbose=2, cv=3)
+                     verbose=2, cv=2)
         .fit(X_train, y_train)
     )
 pd.DataFrame(rfc_opt.cv_results_).to_csv('rfc_gridexploration_cv.csv', index=False)
