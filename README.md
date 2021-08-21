@@ -12,9 +12,7 @@ The main goal of this project will be to construct an analysis pipeline that tri
 
 [3]  L. Shiloh-Perl and R. Giryes, “Introduction to deep learning,” arXiv preprint arXiv:2003.03253, 2020.
 
-[4]  T. Neupert, M. H. Fischer, E. Greplova, K. Choo, and M. Denner, “Introduction to machine learning
-
-for the sciences,” arXiv preprint arXiv:2102.04883, 2021.
+[4]  T. Neupert, M. H. Fischer, E. Greplova, K. Choo, and M. Denner, “Introduction to machine learning for the sciences,” arXiv preprint arXiv:2102.04883, 2021.
 
 [5]  J. M. Johnson and T. M. Khoshgoftaar, “Survey on deep learning with class imbalance,” Journal of Big Data, vol. 6, no. 1, pp. 1–54, 2019.
 
