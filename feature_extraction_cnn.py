@@ -33,7 +33,7 @@ print('Data normalized')
 
 # Import the previous model that was obtained from the training with the
 # regular images
-model = tf.keras.models.load_model('CNN_model_v2_augmented_data.h5')
+model = tf.keras.models.load_model('models/CNN_model_v2_augmented_data.h5')
 
 # -> Retrieve the convolutional layers from the previous model
 for i in range(len(model.layers)):
