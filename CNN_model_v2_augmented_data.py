@@ -17,10 +17,8 @@ img_data, lbl_data = load_cleaned_volcano_data()
 img_aug, lbl_aug = load_augmented_data()
 
 # Do some cuts
-img_non_volcano = img_data[lbl_data['Volcano?'] == 0]
-lbl_non_volcano = lbl_data[lbl_data['Volcano?'] == 0]
-img_data = pd.concat([img_non_volcano, img_aug], ignore_index=True)
-img_lbl = pd.concat([lbl_non_volcano, lbl_aug], ignore_index=True)
+img_data = pd.concat([img_data, img_aug], ignore_index=True)
+img_lbl = pd.concat([lbl_data, lbl_aug], ignore_index=True)
 print('Augmented data loaded')
 
 # Normalize and convert to numpy
@@ -53,8 +51,8 @@ model.summary()
 # Fit the model to the data and get the results
 history = model.fit(
     X_train, y_train,
-    batch_size=64, epochs=100,
-    verbose=True, validation_split=0.35, callbacks=None
+    batch_size=64, epochs=200,
+    verbose=True, validation_split=0.3, callbacks=None
 )
 
 # Save model and weights to HDF5

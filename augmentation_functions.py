@@ -39,15 +39,15 @@ def exposure_randomize(img, PIL_input):
 def random_flip(img):
     ''' Straightforward randomization of the image flip '''
 
-    int = random.randint(1, 4)
+    int = random.randint(2, 4)
     img = array_shape_check(img)
 
-    if int == 1:
-        # No change
-        print('No change')
-        return img
+    # if int == 1:
+    #     # No change
+    #     print('No change')
+    #     return img
 
-    elif int == 2:
+    if int == 2:
         # Up-down flip
         print('Up-down flip')
         return np.flipud(img)
@@ -97,7 +97,7 @@ def augmentation(image_data, image_label):
     counterparts - only one augmentation per image. '''
 
     # image_data = image_data.to_numpy().reshape(len(image_data), 110, 110)
-    augmented = np.zeros((len(image_data)*2, 110, 110))
+    augmented = np.zeros((len(image_data), 110, 110))
     labels = []
     i = 0
     j = 0
@@ -110,12 +110,12 @@ def augmentation(image_data, image_label):
                     )
                 )
             )
-        labels.append(image_label.iloc[j])
-        augmented[i+1] = img
-        labels.append(image_label.iloc[j])
-        # Add index
-        print(i, j)
-        i += 2
-        j += 1
+        labels.append(image_label.iloc[i])
+        # augmented[i+1] = img
+        # labels.append(image_label.iloc[j])
+        # # Add index
+        # print(i, j)
+        i += 1
+        # j += 1
 
     return augmented, labels

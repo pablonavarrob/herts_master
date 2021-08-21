@@ -1,55 +1,28 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd
-from data_loading_functions import load_raw_volcano_data
+from data_loading_functions import load_raw_volcano_data, load_augmented_data
 
 train_images, train_labels, test_images, test_labels = load_raw_volcano_data()
 
-### DATA AUGMENTATION PLOTS #####
-a = train_images.iloc[0].to_numpy().reshape(110, 110)
-fig, ax = plt.subplots(2, 2, figsize=[10, 10], tight_layout=True)
-fig.suptitle("Image augmentation: rotation", fontsize=20)
-ax[0, 0].imshow(a)
-ax[0, 0].title.set_text("Original image")
-ax[0, 1].imshow(np.rot90(a))
-ax[0, 1].title.set_text("90 deg. rotation")
-ax[1, 0].imshow(rotate_180(a))
-ax[1, 0].title.set_text("180 deg. rotation")
-ax[1, 1].imshow(rotate_270(a))
-ax[1, 1].title.set_text("270 deg. rotation")
-plt.show()
+### DATA AUGMENTATION PLOTS ####################################################
+aug_img, aug_lbl = load_augmented_data()
+aug_img = aug_img.to_numpy().reshape(2824, 110, 110)
+fig, ax = plt.subplots(2, 3, figsize=[15,10], tight_layout=True)
+j = 0
+for i in range(3):
+    ax[0, i].imshow(aug_img[j], cmap='gray')
+    ax[0, i].set_xticklabels([])
+    ax[0, i].set_yticklabels([])
+    ax[1, i].imshow(aug_img[j + 1], cmap='gray')
+    ax[1, i].set_xticklabels([])
+    ax[1, i].set_yticklabels([])
+    j += 2
+ax[0,0].set_ylabel('Raw', rotation=90, fontsize=26)
+ax[1,0].set_ylabel('Augmented', rotation=90, fontsize=26)
+plt.savefig('figures/augmented_example.png', dpi=150)
 
-fig, ax = plt.subplots(2, 1, figsize=[10, 10], tight_layout=True)
-fig.suptitle("Image augmentation: mirroring", fontsize=20)
-ax[0].imshow(np.fliplr(a))
-ax[0].title.set_text("Mirrored image: horizontal axis")
-ax[1].imshow(np.flipud(a))
-ax[1].title.set_text("Mirrored image: vertical axis")
-plt.show()
-
-### DATA AUGMENTATION PLOTS #####
-a = train_images.iloc[0].to_numpy().reshape(110, 110)
-fig, ax = plt.subplots(2, 2, figsize=[10, 10], tight_layout=True)
-fig.suptitle("Image augmentation: rotation", fontsize=20)
-ax[0, 0].imshow(a)
-ax[0, 0].title.set_text("Original image")
-ax[0, 1].imshow(np.rot90(a))
-ax[0, 1].title.set_text("90 deg. rotation")
-ax[1, 0].imshow(rotate_180(a))
-ax[1, 0].title.set_text("180 deg. rotation")
-ax[1, 1].imshow(rotate_270(a))
-ax[1, 1].title.set_text("270 deg. rotation")
-plt.show()
-
-fig, ax = plt.subplots(2, 1, figsize=[10, 10], tight_layout=True)
-fig.suptitle("Image augmentation: mirroring", fontsize=20)
-ax[0].imshow(np.fliplr(a))
-ax[0].title.set_text("Mirrored image: horizontal axis")
-ax[1].imshow(np.flipud(a))
-ax[1].title.set_text("Mirrored image: vertical axis")
-plt.show()
-
-### OVERVIEW PLOTS #####
+### OVERVIEW PLOTS ############################################################
 # Study the balancing of the data set
 total_img, total_lbl = load_raw_volcano_data(False)
 plt.rcParams.update({'font.size': 18})
