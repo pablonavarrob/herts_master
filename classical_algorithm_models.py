@@ -43,7 +43,7 @@ print('Train/test split done')
 ########################## PARAMETER SPACE EXPLORATION #########################
 ################################################################################
 
-### Random forest classifier ##
+### Linear support vector classifier ##
 lsvc_param_dict = {
     'C': [[0.001], [0.01], [0.1], [1], [10]],
     'class_weight': [[None], ['balanced']],
@@ -79,7 +79,6 @@ rfc_opt = (
     )
 pd.DataFrame(rfc_opt.cv_results_).to_csv('rfc_gridexploration_cv.csv',
                                                                     index=False)
-
 
 ################################################################################
 ######################## CREATE THE FINAL MODELS - TEST ########################

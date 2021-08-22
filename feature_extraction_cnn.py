@@ -13,22 +13,20 @@ from data_loading_functions import load_cleaned_volcano_data, load_augmented_dat
 from CNN_functions import normalize_image_data, build_model_CNN_v1
 from sklearn.model_selection import train_test_split
 import os
+from matplotlib import gridspec
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
 
-# Import data without the corrupted images
+# Import data wuthout the corrupted images and also the augmented data
 img_data, lbl_data = load_cleaned_volcano_data()
 img_aug, lbl_aug = load_augmented_data()
 
 # Do some cuts
-img_non_volcano = img_data[lbl_data['Volcano?'] == 0]
-lbl_non_volcano = lbl_data[lbl_data['Volcano?'] == 0]
-img_data = pd.concat([img_non_volcano, img_aug], ignore_index=True)
-img_lbl = pd.concat([lbl_non_volcano, lbl_aug], ignore_index=True)
+img_data = pd.concat([img_data, img_aug], ignore_index=True)
+img_lbl = pd.concat([lbl_data, lbl_aug], ignore_index=True)
 print('Augmented data loaded')
 
-
 # Normalize and convert to numpy
-img_data = normalize_image_data(img_data)
+img_data_normalized = normalize_image_data(img_data)
 print('Data normalized')
 
 # Import the previous model that was obtained from the training with the
@@ -42,33 +40,51 @@ for i in range(len(model.layers)):
         continue
     print(i , layer.name , layer.output.shape)
 
-model_viz = Model(inputs=model.inputs , outputs=model.layers[1].output)
+model_viz = Model(inputs=model.inputs , outputs=model.layers[0].output)
 
 # Select normalized image
-image = img_data[7945]
+image = img_data_normalized[8]
 image = np.expand_dims(image, axis=0) # Need to expand dimensions so that the
 # input looks like something from within the network
 
-# Image of which the feature map will be computed
-fig, ax = plt.subplots(1, 1, figsize=(15,15), tight_layout=False)
-plt.suptitle("Type 1 Volcano - Example for the Feature Map", fontsize=30)
+# Image of which the feature map will be computed ##############################
+fig, ax = plt.subplots(1, 1, figsize=(15,15), tight_layout=True)
 ax.imshow(image.reshape(110, 110), cmap='gray')
 ax.set_xticklabels([])
 ax.set_yticklabels([])
-plt.savefig("figures/image_of_featuremap_augmented_v2.jpg", dpi=300)
+plt.savefig("figures/image_of_featuremap.jpg", dpi=300)
 
-# Compute and plot the feature map for one of the images
+# Compute and plot the feature map for one of the images #######################
 # from the second convo layer
-features = model_viz.predict(image).reshape(54, 54, 32)
-fig, ax = plt.subplots(6, 4, figsize=(20,15), tight_layout=False)
-plt.suptitle("Feature map for a type 1 volcano", fontsize=30)
+features = model_viz.predict(image).reshape(model.layers[0].output_shape[1],
+                                            model.layers[0].output_shape[2],
+                                            model.layers[0].output_shape[3])
+
+nrow = 6
+ncol = 4
+fig = plt.figure(figsize=(ncol+1, nrow+1))
+gs = gridspec.GridSpec(nrow, ncol,
+         wspace=0.0, hspace=0.0,
+         top=1.-0.5/(nrow+1), bottom=0.5/(nrow+1),
+         left=0.5/(ncol+1), right=1-0.5/(ncol+1))
 z = 0
-for j in range(4):
-    for i in range(6):
-        ax[i, j].imshow(features[:,:,z],
-         cmap='gray') #, vmin=min(features[:,:,i]), vmax=max(features[:,:,i]))
-        ax[i, j].set_xticklabels([])
-        ax[i, j].set_yticklabels([])
+for i in range(nrow):
+    for j in range(ncol):
+        ax = plt.subplot(gs[i,j])
+        ax.imshow(features[:,:,z], cmap='gray')
+        ax.set_xticklabels([])
+        ax.set_yticklabels([])
         z += 1
 plt.savefig("figures/feature_map_augmented_v2.jpg", dpi=300)
-plt.close()
+
+# Plot the convolutional filters corresponding to 1st layer ####################
+weights = model.layers[0].get_weights()[0][:,:,0,:]
+z = 0
+for i in range(nrow):
+    for j in range(ncol):
+        ax = plt.subplot(gs[i,j])
+        ax.imshow(weights[:,:,z], cmap='gray')
+        ax.set_xticklabels([])
+        ax.set_yticklabels([])
+        z += 1
+plt.savefig("figures/convolutional_filters_augmented_v2.jpg", dpi=300)
