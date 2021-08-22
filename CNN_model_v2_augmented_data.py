@@ -12,7 +12,7 @@ from sklearn.model_selection import train_test_split
 import os
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
 
-# Import data wuthout the corrupted images
+# Import data wuthout the corrupted images and also the augmented data
 img_data, lbl_data = load_cleaned_volcano_data()
 img_aug, lbl_aug = load_augmented_data()
 

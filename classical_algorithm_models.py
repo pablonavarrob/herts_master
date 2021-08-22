@@ -1,7 +1,7 @@
 import pandas as pd
 import numpy as np
 from sklearn.ensemble import RandomForestClassifier
-from data_loading_functions import load_cleaned_volcano_data
+from data_loading_functions import load_cleaned_volcano_data, load_augmented_data
 from CNN_functions import normalize_image_data
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import (accuracy_score, confusion_matrix,
@@ -12,26 +12,38 @@ from sklearn.model_selection import ParameterGrid, GridSearchCV
 import os
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
 
-## Same data loading pipeline ##################################################
-# Import data without the corrupted images
+################################################################################
+###################### Data loading pipeline ###################################
+################################################################################
+# Import data wuthout the corrupted images
 img_data, lbl_data = load_cleaned_volcano_data()
-print('Data loaded')
+img_aug, lbl_aug = load_augmented_data()
+
+# Do some cuts
+img_data = pd.concat([img_data, img_aug], ignore_index=True)
+img_lbl = pd.concat([lbl_data, lbl_aug], ignore_index=True)
+print('Augmented data loaded')
 
 # Do the train-test split and convert the labels to hot encoded vectores
 X_train, X_test, y_train, y_test = train_test_split(
     img_data,
-    lbl_data["Volcano?"], # Classify on whether there is a volcano or not
+    img_lbl["Volcano?"], # Classify on whether there is a volcano or not
     test_size=0.33,
     random_state=1
 )
 
-X_train = X_train.to_numpy()
-X_test = X_test.to_numpy()
+# Also: normalize the data
+X_train = X_train.to_numpy()/255.
+X_test = X_test.to_numpy()/255.
 y_train = y_train.to_numpy()
 y_test = y_test.to_numpy()
 print('Train/test split done')
 
-### Random forest classifier ###################################################
+################################################################################
+########################## PARAMETER SPACE EXPLORATION #########################
+################################################################################
+
+### Random forest classifier ##
 lsvc_param_dict = {
     'C': [[0.001], [0.01], [0.1], [1], [10]],
     'class_weight': [[None], ['balanced']],
@@ -45,10 +57,10 @@ lsvc_opt = (
                      verbose=2, cv=10)
         .fit(X_train, y_train)
     )
-pd.DataFrame(lsvc_opt.cv_results_).to_csv('linear_svc_gridexploration_cv.csv', index=False)
+pd.DataFrame(lsvc_opt.cv_results_).to_csv('linear_svc_gridexploration_cv.csv',
+                                                                    index=False)
 
-### Random forest classifier ###################################################
-# Do a parameters space exploration
+### Random forest classifier ####
 rfc_param_dit = {
     'criterion': [['gini'], ['entropy']],
     'n_estimators': [[300], [500], [700], [1000]],
@@ -65,4 +77,32 @@ rfc_opt = (
                      verbose=2, cv=2)
         .fit(X_train, y_train)
     )
-pd.DataFrame(rfc_opt.cv_results_).to_csv('rfc_gridexploration_cv.csv', index=False)
+pd.DataFrame(rfc_opt.cv_results_).to_csv('rfc_gridexploration_cv.csv',
+                                                                    index=False)
+
+
+################################################################################
+######################## CREATE THE FINAL MODELS - TEST ########################
+################################################################################
+
+rfc_opt = pd.read_csv("../data/rfc_gridexploration_cv.csv")
+lsvc_opt = pd.read_csv("../data/linear_svc_gridexploration_cv.csv")
+
+optimized_rfc = rfc_opt[rfc_opt.rank_test_score == 1]
+rfc_opt_dict = {
+    'criterion': optimized_rfc.param_criterion.values[0],
+    'n_estimators': optimized_rfc.param_n_estimators.values[0],
+    'max_depth': optimized_rfc.param_max_depth.values[0],
+    'min_samples_split': optimized_rfc.param_min_samples_split.values[0],
+    'min_samples_leaf': optimized_rfc.param_min_samples_leaf.values[0],
+    'class_weight': optimized_rfc.param_class_weight.values[0]
+}
+model_rfc = RandomForestClassifier(**rfc_opt_dict).fit(X_train, y_train)
+
+optimized_lsvc = lsvc_opt[lsvc_opt.rank_test_score == 1]
+lsvc_opt_dict = {
+lsvc_param_dict = {
+    'C': optimized_lsvc.param_C.values[0],
+    'class_weight': optimized_lsvc.param_class_weight.values[0]
+}
+model_lsvc = LinearSVC(dual=False, **lsvc_param_dict).fit(X_train, y_train)
