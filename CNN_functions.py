@@ -108,11 +108,6 @@ def build_model_CNN_v3(INPUT_SHAPE):
     model.add(MaxPooling2D(pool_size=(2, 2)))
     model.add(Dropout(rate=0.3))
 
-    # Block 2
-    model.add(Conv2D(32, (4, 4), activation='relu'))
-    model.add(MaxPooling2D(pool_size=(2, 2)))
-    model.add(Dropout(rate=0.35))
-
     # Block 3
     model.add(Conv2D(64, (6, 6), activation='relu'))
     model.add(MaxPooling2D(pool_size=(2, 2)))
@@ -125,9 +120,9 @@ def build_model_CNN_v3(INPUT_SHAPE):
 
     # Dense layer
     model.add(Flatten())
-    model.add(Dense(128, activation='relu', kernel_regularizer='l2'))
+    model.add(Dense(128, activation='relu'))
     model.add(Dropout(rate=0.5))
-    model.add(Dense(1, activation='sigmoid')) # Classification layer
+    model.add(Dense(2, activation='softmax')) # Classification layer
 
     return model
 

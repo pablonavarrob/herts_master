@@ -11,15 +11,17 @@ from sklearn.model_selection import train_test_split
 import os
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
 
+
+################################################################################
+###################### Data loading pipeline ###################################
+################################################################################
 # Import data wuthout the corrupted images
 img_data, lbl_data = load_cleaned_volcano_data()
 img_aug, lbl_aug = load_augmented_data()
 
 # Do some cuts
-img_non_volcano = img_data[lbl_data['Volcano?'] == 0]
-lbl_non_volcano = lbl_data[lbl_data['Volcano?'] == 0]
-img_data = pd.concat([img_non_volcano, img_aug], ignore_index=True)
-img_lbl = pd.concat([lbl_non_volcano, lbl_aug], ignore_index=True)
+img_data = pd.concat([img_data, img_aug], ignore_index=True)
+img_lbl = pd.concat([lbl_data, lbl_aug], ignore_index=True)
 print('Augmented data loaded')
 
 # Normalize and convert to numpy
@@ -34,18 +36,20 @@ X_train, X_test, y_train, y_test = train_test_split(
     random_state=1
 )
 
-y_train = np.asarray(y_train).astype('float32').reshape((-1,1))
-y_test = np.asarray(y_test).astype('float32').reshape((-1,1))
+# Also: normalize the data
+X_train = X_train/255.
+X_test = X_test/255.
+y_train = y_train.to_numpy()
+y_test = y_test.to_numpy()
 print('Train/test split done')
-
 
 # Build the model and compile it
 # input_shape = (110, 110, 1)
 model = build_model_CNN_v3((110, 110, 1))
 # Define adam and compile
 model.compile(
-    optimizer='rmsprop',
-    loss='binary_crossentropy',  # Binary classification
+    optimizer='adam',
+    loss='categorical_crossentropy',  # Binary classification
     metrics=['acc', 'AUC']
 )
 model.summary()
@@ -53,13 +57,12 @@ model.summary()
 # Fit the model to the data and get the results
 history = model.fit(
     X_train, y_train,
-    batch_size=75, epochs=200,
-    verbose=True, validation_split=0.35, callbacks=None)
+    batch_size=100, epochs=45,
+    verbose=True, validation_split=0.125, callbacks=None)
 
 # Save model and weights to HDF5
 model.save("models/CNN_model_v3_augmented_data.h5")
 print("Saved model to disk")
 
-# Print the accuracy of the test data-set
-loss, acc = model.evaluate(X_test, y_test, verbose=2)
-print("Model accuracy: {:5.2f}%".format(100 * acc))
+hist_df = pd.DataFrame(history.history)
+hist_df.to_csv('hist_cnn_v3_aug.csv', index=False)

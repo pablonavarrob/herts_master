@@ -45,10 +45,10 @@ print('Train/test split done')
 
 # Import the model trained on augmented data
 model = tf.keras.models.load_model('models/CNN_model_v2_augmented_data.h5')
-
+history = pd.read_csv('hist_cnn_v2.csv')
 # Show the confusion matrix
 class_names = ['No Volcano', 'Volcano']
-y_pred = tf.greater(model.predict(X_test), 0.95).numpy()
+y_pred = tf.greater(model.predict(X_test), 0.5).numpy()
 # Here in can use threshold
 # when usuing tf.greater(predition, float_threshold)
 cm = confusion_matrix(y_test, y_pred.astype(int))
