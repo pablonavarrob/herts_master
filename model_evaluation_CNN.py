@@ -1,7 +1,8 @@
 from sklearn.metrics import (f1_score, confusion_matrix,
                              roc_curve)
 import numpy as np
-import seaborn as sn
+import pandas as pd
+import seaborn as sns
 import matplotlib.pyplot as plt
 from data_loading_functions import load_cleaned_volcano_data, load_augmented_data
 from CNN_functions import normalize_image_data, build_model_CNN_v2
@@ -11,28 +12,43 @@ import os
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
 
 
+################################################################################
+###################### Data loading pipeline ###################################
+################################################################################
 # Import data wuthout the corrupted images
 img_data, lbl_data = load_cleaned_volcano_data()
 img_aug, lbl_aug = load_augmented_data()
 
-# Normalize the non-augmented and convert to numpy
+# Do some cuts
+img_data = pd.concat([img_data, img_aug], ignore_index=True)
+img_lbl = pd.concat([lbl_data, lbl_aug], ignore_index=True)
+print('Augmented data loaded')
+
+# Normalize and convert to numpy
 img_data_normalized = normalize_image_data(img_data)
 print('Data normalized')
 
-# Get the training set and the labels and all that
+# Do the train-test split and convert the labels to hot encoded vectores
 X_train, X_test, y_train, y_test = train_test_split(
     img_data_normalized,
-    lbl_data["Volcano?"], # Classify on whether there is a volcano or not
+    img_lbl["Volcano?"], # Classify on whether there is a volcano or not
     test_size=0.33,
     random_state=1
 )
 
+# Also: normalize the data
+X_train = X_train/255.
+X_test = X_test/255.
+y_train = y_train.to_numpy()
+y_test = y_test.to_numpy()
+print('Train/test split done')
+
 # Import the model trained on augmented data
-model_cnn = tf.keras.models.load_model('CNN_model_v2_augmented_data.h5')
+model = tf.keras.models.load_model('models/CNN_model_v2_augmented_data.h5')
 
 # Show the confusion matrix
 class_names = ['No Volcano', 'Volcano']
-y_pred = tf.greater(model_cnn.predict(X_test), 0.5).numpy()
+y_pred = tf.greater(model.predict(X_test), 0.95).numpy()
 # Here in can use threshold
 # when usuing tf.greater(predition, float_threshold)
 cm = confusion_matrix(y_test, y_pred.astype(int))
@@ -42,15 +58,3 @@ sns.heatmap(
     fmt='d', cmap='Blues'
 )
 plt.show()
-# One good way to measure performance for imbalanced datasets is the
-# F-score, which combines precision and recall ina single measure.
-# F-score is the harmonic mean of both quantities.
-
-# Two types of curves:
-# - Precision-Recall score -> average precision
-# - Receiver Operating Characteristic -> Area Under Curve
-
-# Both of them come from the confusion matrix
-# -> To better choose parameters for the imbalanced data set, change
-# the decision threshold from defeault to something that better represents
-# the data.

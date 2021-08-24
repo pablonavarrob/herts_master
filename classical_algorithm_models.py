@@ -96,6 +96,8 @@ rfc_opt_dict = {
     'min_samples_leaf': optimized_rfc.param_min_samples_leaf.values[0],
     'class_weight': optimized_rfc.param_class_weight.values[0]
 }
+## Create latex table for thesis
+pd.DataFrame(rfc_opt_dict).to_latex()
 model_rfc = RandomForestClassifier(**rfc_opt_dict).fit(X_train, y_train)
 
 optimized_lsvc = lsvc_opt[lsvc_opt.rank_test_score == 1]

@@ -44,15 +44,19 @@ model = build_model_CNN_v2((110, 110, 1))
 model.compile(
     optimizer='rmsprop',
     loss='binary_crossentropy',  # Binary classification
-    metrics=['acc']
+    metrics=['acc', 'AUC']
 )
 model.summary()
 
 # Fit the model to the data and get the results
 history = model.fit(
     X_train, y_train,
-    batch_size=64, epochs=200,
-    verbose=True, validation_split=0.3, callbacks=None
+    batch_size=100, epochs=200,
+    verbose=True, validation_split=0.15,
+    callbacks=tf.keras.callbacks.EarlyStopping(
+        monitor='val_auc', min_delta=0.05, verbose=1, patience=10,
+        mode='auto'
+        )
 )
 
 # Save model and weights to HDF5
@@ -60,5 +64,13 @@ model.save("models/CNN_model_v2_augmented_data.h5")
 print("Saved model to disk")
 
 # Print the accuracy of the test data-set
-loss, acc = model.evaluate(X_test, y_test, verbose=2)
-print("Model accuracy: {:5.2f}%".format(100 * acc))
+# loss, acc = model.evaluate(X_test, y_test, verbose=2)
+# print("Model accuracy: {:5.2f}%".format(100 * acc))
+
+
+hist_df = pd.DataFrame(history.history)
+hist_df.to_csv('hist_cnn_v2.csv', index=False)
+
+hist_csv_file = 'history.csv'
+with open(hist_csv_file, mode='w') as f:
+    hist_df.to_csv(f)
