@@ -42,7 +42,7 @@ print('Train/test split done')
 # input_shape = (110, 110, 1)
 model = build_model_CNN_v2((110, 110, 1))
 model.compile(
-    optimizer='rmsprop',
+    optimizer='adam',
     loss='binary_crossentropy',  # Binary classification
     metrics=['acc', 'AUC']
 )
@@ -51,12 +51,11 @@ model.summary()
 # Fit the model to the data and get the results
 history = model.fit(
     X_train, y_train,
-    batch_size=100, epochs=200,
-    verbose=True, validation_split=0.15,
+    batch_size=100, epochs=60,
+    verbose=True, validation_split=0.33,
     callbacks=tf.keras.callbacks.EarlyStopping(
-        monitor='val_auc', min_delta=0.05, verbose=1, patience=10,
-        mode='auto'
-        )
+        monitor='val_auc', min_delta=0.1, verbose=1, patience=10,
+        mode='auto')
 )
 
 # Save model and weights to HDF5

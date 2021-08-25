@@ -52,9 +52,33 @@ y_pred = tf.greater(model.predict(X_test), 0.5).numpy()
 # Here in can use threshold
 # when usuing tf.greater(predition, float_threshold)
 cm = confusion_matrix(y_test, y_pred.astype(int))
+# cm = np.array([[2588, 54], [65, 857]])
 
+# Plot the confusion matrix for the project ######
+fig, ax = plt.subplots(1, figsize=[5,4], tight_layout=True)
 sns.heatmap(
     cm, annot=True, xticklabels=class_names, yticklabels=class_names,
-    fmt='d', cmap='Blues'
+    fmt='d', cmap='Blues', ax=ax, cbar=False
 )
-plt.show()
+plt.savefig('figures/confusion_matrix_cnn.png', dpi=150)
+
+# Plot the training curves  #######
+# Model AUC evolution
+plt.rcParams.update({'font.size': 18})
+fig, ax = plt.subplots(1, figsize=[10, 8], tight_layout=True)
+ax.plot(history.index.array + 1, history.auc, label='Training AUC')
+ax.plot(history.index.array + 1, history.val_auc, label='Validation AUC')
+ax.set_xlabel('Epoch')
+ax.set_ylabel('AUC')
+ax.legend()
+plt.savefig('figures/auc_trainig_cnn.png', dpi=150)
+
+# Model LOSS evolution
+plt.rcParams.update({'font.size': 18})
+fig, ax = plt.subplots(1, figsize=[10, 8], tight_layout=True)
+ax.plot(history.index.array + 1, history.loss, label='Training loss')
+ax.plot(history.index.array + 1, history.val_loss, label='Validation loss')
+ax.set_xlabel('Epoch')
+ax.set_ylabel('Loss')
+ax.legend()
+plt.savefig('figures/loss_trainig_cnn.png', dpi=150)
