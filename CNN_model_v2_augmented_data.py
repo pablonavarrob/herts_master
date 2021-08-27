@@ -5,7 +5,7 @@ from tensorflow.keras.layers import Dense, Conv2D, Flatten, Dropout, MaxPooling2
 from tensorflow.keras.optimizers import Adam
 import pandas as pd
 import numpy as np
-from matplotlib import pyplot as plt
+import matplotlib.pyplot as plt
 from data_loading_functions import load_cleaned_volcano_data, load_augmented_data
 from CNN_functions import normalize_image_data, build_model_CNN_v2
 from sklearn.model_selection import train_test_split
@@ -51,11 +51,8 @@ model.summary()
 # Fit the model to the data and get the results
 history = model.fit(
     X_train, y_train,
-    batch_size=100, epochs=60,
+    batch_size=1000, epochs=60,
     verbose=True, validation_split=0.33,
-    callbacks=tf.keras.callbacks.EarlyStopping(
-        monitor='val_auc', min_delta=0.1, verbose=1, patience=10,
-        mode='auto')
 )
 
 # Save model and weights to HDF5
