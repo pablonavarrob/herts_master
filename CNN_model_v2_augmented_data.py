@@ -51,8 +51,10 @@ model.summary()
 # Fit the model to the data and get the results
 history = model.fit(
     X_train, y_train,
-    batch_size=1000, epochs=60,
+    batch_size=1000, epochs=200,
     verbose=True, validation_split=0.33,
+    callbacks=tf.keras.callbacks.EarlyStopping(monitor='val_loss',
+     verbose=1, patience=3, min_delta=0.1)
 )
 
 # Save model and weights to HDF5
