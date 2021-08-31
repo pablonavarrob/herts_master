@@ -53,17 +53,15 @@ history = model.fit(
     X_train, y_train,
     batch_size=1000, epochs=200,
     verbose=True, validation_split=0.33,
-    callbacks=tf.keras.callbacks.EarlyStopping(monitor='val_loss',
-     verbose=1, patience=3, min_delta=0.1)
+    callbacks=tf.keras.callbacks.EarlyStopping(
+     monitor='val_loss',
+     verbose=1, patience=3, min_delta=0.1
+    )
 )
 
 # Save model and weights to HDF5
 model.save("models/CNN_model_v2_augmented_data.h5")
 print("Saved model to disk")
-
-# Print the accuracy of the test data-set
-# loss, acc = model.evaluate(X_test, y_test, verbose=2)
-# print("Model accuracy: {:5.2f}%".format(100 * acc))
 
 
 hist_df = pd.DataFrame(history.history)
